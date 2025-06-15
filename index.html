@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Split Pro - The Smart Text Splitter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html {
+            font-family: 'Inter', sans-serif;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #e5e7eb;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #9ca3af;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    <div id="app" class="container mx-auto p-4 md:p-6">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900">Content Split Pro</h1>
+            <p class="text-gray-600 mt-2 text-lg">Intelligently split any text into manageable blocks.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <main class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
+                <div class="mb-6">
+                    <label class="block text-lg font-semibold text-gray-700 mb-3">Presets</label>
+                    <div id="presets-container" class="flex flex-wrap gap-2">
+                        <button data-limit="1800"
+                            class="preset-btn bg-gray-100 text-gray-800 px-3 py-1.5 rounded-lg hover:bg-indigo-100 hover:text-indigo-800 transition">🎬
+                            Video Script</button>
+                        <button data-limit="280"
+                            class="preset-btn bg-gray-100 text-gray-800 px-3 py-1.5 rounded-lg hover:bg-indigo-100 hover:text-indigo-800 transition">🐦
+                            Twitter / X</button>
+                        <button data-limit="300"
+                            class="preset-btn bg-gray-100 text-gray-800 px-3 py-1.5 rounded-lg hover:bg-indigo-100 hover:text-indigo-800 transition">🖥️
+                            Presentation</button>
+                        <button data-limit="600"
+                            class="preset-btn bg-gray-100 text-gray-800 px-3 py-1.5 rounded-lg hover:bg-indigo-100 hover:text-indigo-800 transition">📰
+                            Blog Paragraphs</button>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="source-text" class="block text-lg font-semibold text-gray-700 mb-2">Source Text</label>
+                    <textarea id="source-text" rows="12"
+                        class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition-shadow shadow-sm"
+                        placeholder="Paste your text here... or upload a .txt file."></textarea>
+                </div>
+
+                <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <label for="file-upload"
+                        class="w-full sm:w-auto cursor-pointer bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-100 transition flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
+                        <span>Upload .txt File</span>
+                        <input id="file-upload" type="file" class="hidden" accept=".txt">
+                    </label>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <label for="char-limit" class="text-sm font-medium text-gray-700 whitespace-nowrap">Max
+                                Chars:</label>
+                            <input type="number" id="char-limit" value="1800"
+                                class="w-24 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-center">
+                        </div>
+                        <button id="split-btn"
+                            class="bg-indigo-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105 shadow-md">
+                            Split Text
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-10">
+                    <h2 class="text-2xl font-semibold text-gray-900 border-b-2 border-gray-200 pb-3 mb-6">Content Blocks
+                    </h2>
+                    <div id="output-container" class="space-y-6">
+                        <p class="text-gray-500 p-4 bg-gray-50 rounded-lg">Your generated blocks will appear here.</p>
+                    </div>
+                </div>
+            </main>
+
+            <div id="hidden-storage" class="hidden"></div>
+
+            <aside class="lg:col-span-1 space-y-8 h-fit">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-semibold text-gray-900 border-b-2 border-gray-200 pb-3 mb-4">Analysis 📊
+                    </h2>
+                    <div id="details-container" class="space-y-3 text-gray-700">
+                        <p>Analysis of your source text will appear here.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-semibold text-gray-900 border-b-2 border-gray-200 pb-3 mb-4">Completed
+                        Blocks ✅</h2>
+                    <div id="completed-parts-container" class="flex flex-wrap gap-2">
+                        <p class="text-gray-500 text-sm">Completed block tags will show up here.</p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Element References ---
+            const sourceText = document.getElementById('source-text');
+            const fileUpload = document.getElementById('file-upload');
+            const charLimitInput = document.getElementById('char-limit');
+            const splitButton = document.getElementById('split-btn');
+            const outputContainer = document.getElementById('output-container');
+            const completedPartsContainer = document.getElementById('completed-parts-container');
+            const detailsContainer = document.getElementById('details-container');
+            const presetsContainer = document.getElementById('presets-container');
+
+            let contentBlocks = [];
+
+            // --- Event Listeners ---
+            fileUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => { sourceText.value = e.target.result; };
+                    reader.readAsText(file);
+                }
+            });
+
+            splitButton.addEventListener('click', handleSplit);
+            presetsContainer.addEventListener('click', handlePresetClick);
+            outputContainer.addEventListener('click', handleOutputContainerClick);
+            completedPartsContainer.addEventListener('click', handleRestorePartClick);
+
+            // --- Main Functions ---
+            function handlePresetClick(event) {
+                const target = event.target.closest('.preset-btn');
+                if (!target) return;
+
+                const limit = target.dataset.limit;
+                charLimitInput.value = limit;
+
+                document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('bg-indigo-600', 'text-white'));
+                target.classList.add('bg-indigo-600', 'text-white');
+            }
+
+            function handleSplit() {
+                const text = sourceText.value.trim();
+                const maxCharLimit = parseInt(charLimitInput.value, 10);
+
+                if (!text) {
+                    outputContainer.innerHTML = '<p class="text-red-500 p-4 bg-red-50 rounded-lg">Please enter some text to split.</p>';
+                    return;
+                }
+
+                calculateAndDisplayDetails(text);
+                resetCompletedParts();
+
+                contentBlocks = splitText(text, maxCharLimit);
+                renderBlocks();
+            }
+
+            function splitText(text, limit) {
+                const blocks = [];
+                let remainingText = text;
+
+                while (remainingText.length > 0) {
+                    const numberingPlaceholder = ` (${blocks.length + 1}/${blocks.length + 10})`;
+                    const adjustedLimit = limit - numberingPlaceholder.length;
+
+                    if (remainingText.length <= adjustedLimit) {
+                        blocks.push(remainingText);
+                        break;
+                    }
+
+                    let blockContent;
+                    let potentialCutoff = remainingText.substring(0, adjustedLimit);
+                    const lastSentenceEnd = Math.max(potentialCutoff.lastIndexOf('. '), potentialCutoff.lastIndexOf('! '), potentialCutoff.lastIndexOf('? '));
+
+                    if (lastSentenceEnd !== -1) {
+                        blockContent = remainingText.substring(0, lastSentenceEnd + 1);
+                    } else {
+                        const lastSpace = potentialCutoff.lastIndexOf(' ');
+                        blockContent = (lastSpace !== -1) ? remainingText.substring(0, lastSpace) : potentialCutoff;
+                    }
+
+                    blocks.push(blockContent.trim());
+                    remainingText = remainingText.substring(blockContent.length).trim();
+                }
+                return blocks.filter(b => b.length > 0);
+            }
+
+            // --- Rendering & UI ---
+            function renderBlocks() {
+                outputContainer.innerHTML = '';
+                if (contentBlocks.length === 0) {
+                    outputContainer.innerHTML = '<p class="text-gray-500 p-4 bg-gray-50 rounded-lg">No blocks were generated.</p>';
+                    return;
+                }
+                contentBlocks.forEach((block, index) => {
+                    outputContainer.appendChild(createBlockElement(block, index, contentBlocks.length));
+                });
+            }
+
+            function createBlockElement(content, index, total) {
+                const wordCount = content.split(/\s+/).filter(Boolean).length;
+                const charCount = content.length;
+                const blockDiv = document.createElement('div');
+                blockDiv.className = "block-card bg-white border border-gray-200 p-4 rounded-lg shadow-sm";
+                blockDiv.dataset.index = index;
+
+                const numberingText = ` <span class="text-indigo-500 font-normal">(${index + 1}/${total})</span>`;
+
+                blockDiv.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-xl font-semibold text-indigo-700">Block ${index + 1}${numberingText}</h3>
+                        <div class="flex gap-4 text-sm text-gray-600">
+                            <span>Chars: <strong class="font-medium text-gray-800">${charCount}</strong></span>
+                            <span>Words: <strong class="font-medium text-gray-800">${wordCount}</strong></span>
+                        </div>
+                    </div>
+                    <div class="block-content text-gray-800 whitespace-pre-wrap mb-4 max-h-60 overflow-y-auto p-2 bg-gray-50 rounded-md">${content}</div>
+                    <div class="flex gap-3 justify-end">
+                        <button class="btn-copy flex items-center gap-2 bg-blue-50 text-blue-700 font-semibold px-3 py-1.5 rounded-lg text-sm hover:bg-blue-100 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                            <span class="btn-copy-text">Copy</span>
+                        </button>
+                        <button class="btn-done flex items-center gap-2 bg-green-50 text-green-700 font-semibold px-3 py-1.5 rounded-lg text-sm hover:bg-green-100 transition">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                             <span>Done</span>
+                        </button>
+                    </div>
+                `;
+                return blockDiv;
+            }
+
+            // --- Interactivity ---
+            function handleOutputContainerClick(event) {
+                const target = event.target.closest('button');
+                if (!target) return;
+
+                const blockCard = target.closest('.block-card');
+                if (!blockCard) return;
+
+                const index = blockCard.dataset.index;
+                const fullBlockText = contentBlocks[index] + ` (${parseInt(index) + 1}/${contentBlocks.length})`;
+
+                if (target.classList.contains('btn-copy')) {
+                    const copyTextElem = target.querySelector('.btn-copy-text');
+                    navigator.clipboard.writeText(fullBlockText).then(() => {
+                        copyTextElem.textContent = 'Copied!';
+                        setTimeout(() => { copyTextElem.textContent = 'Copy'; }, 2000);
+                    });
+                } else if (target.classList.contains('btn-done')) {
+                    markPartAsDone(index);
+                }
+            }
+
+            function markPartAsDone(indexStr) {
+                const hiddenStorage = document.getElementById('hidden-storage');
+                const blockToMove = outputContainer.querySelector(`.block-card[data-index='${indexStr}']`);
+
+                if (blockToMove) {
+                    if (completedPartsContainer.querySelector('p')) completedPartsContainer.innerHTML = '';
+                    hiddenStorage.appendChild(blockToMove);
+
+                    const completedButton = document.createElement('button');
+                    completedButton.className = "restore-btn bg-indigo-100 text-indigo-800 text-sm font-semibold px-3 py-1 rounded-full hover:bg-indigo-200 transition";
+                    completedButton.textContent = `Block ${parseInt(indexStr) + 1}`;
+                    completedButton.dataset.index = indexStr;
+                    completedPartsContainer.appendChild(completedButton);
+                }
+            }
+
+            function handleRestorePartClick(event) {
+                const target = event.target;
+                if (!target.classList.contains('restore-btn')) return;
+
+                const index = parseInt(target.dataset.index, 10);
+                const hiddenStorage = document.getElementById('hidden-storage');
+                const blockToRestore = hiddenStorage.querySelector(`.block-card[data-index='${index}']`);
+
+                if (blockToRestore) {
+                    const allBlocks = [...outputContainer.querySelectorAll('.block-card')].sort((a, b) => a.dataset.index - b.dataset.index);
+                    const nextBlock = allBlocks.find(block => parseInt(block.dataset.index) > index);
+
+                    outputContainer.insertBefore(blockToRestore, nextBlock || null);
+
+                    target.remove();
+                    if (completedPartsContainer.children.length === 0) resetCompletedParts();
+                }
+            }
+
+            function resetCompletedParts() {
+                document.getElementById('hidden-storage').innerHTML = '';
+                completedPartsContainer.innerHTML = '<p class="text-gray-500 text-sm">Completed block tags will show up here.</p>';
+            }
+
+            // --- Analysis Calculation ---
+            function calculateAndDisplayDetails(text) {
+                const words = text.split(/\s+/).filter(Boolean);
+                const wordCount = words.length;
+                const sentenceCount = text.match(/[^\.!\?]+[\.!\?]+/g)?.length || (wordCount > 0 ? 1 : 0);
+                const gradeLevel = (sentenceCount > 0 && wordCount > 10)
+                    ? (0.39 * (wordCount / sentenceCount) + 11.8 * (words.reduce((acc, w) => acc + countSyllables(w), 0) / wordCount) - 15.59).toFixed(1)
+                    : 'N/A';
+
+                detailsContainer.innerHTML = `
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                        <div class="bg-gray-100 p-3 rounded-lg"><div class="font-bold text-lg">${wordCount.toLocaleString()}</div><div class="text-gray-600">Words</div></div>
+                        <div class="bg-gray-100 p-3 rounded-lg"><div class="font-bold text-lg">${text.length.toLocaleString()}</div><div class="text-gray-600">Characters</div></div>
+                        <div class="bg-gray-100 p-3 rounded-lg col-span-2"><div class="font-bold text-lg">~ Grade ${gradeLevel}</div><div class="text-gray-600">Reading Level</div></div>
+                        <div class="bg-gray-100 p-3 rounded-lg"><div class="font-bold text-lg">~${Math.ceil(wordCount / 225)} min</div><div class="text-gray-600">Reading Time</div></div>
+                        <div class="bg-gray-100 p-3 rounded-lg"><div class="font-bold text-lg">~${Math.ceil(wordCount / 150)} min</div><div class="text-gray-600">Speaking Time</div></div>
+                    </div>`;
+            }
+
+            function countSyllables(word) {
+                word = word.toLowerCase().trim();
+                if (word.length <= 3) return 1;
+                word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '').replace(/^y/, '');
+                return word.match(/[aeiouy]{1,2}/g)?.length || 1;
+            }
+        });
+    </script>
+</body>
+
+</html>
