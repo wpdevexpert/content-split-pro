@@ -330,7 +330,7 @@
                 if (!blockCard) return;
 
                 const index = blockCard.dataset.index;
-                const fullBlockText = contentBlocks[index] + ` (${parseInt(index) + 1}/${contentBlocks.length})`;
+                const fullBlockText = contentBlocks[index];
 
                 if (target.classList.contains('btn-copy')) {
                     const copyTextElem = target.querySelector('.btn-copy-text');
