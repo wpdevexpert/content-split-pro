@@ -336,7 +336,7 @@
                     const copyTextElem = target.querySelector('.btn-copy-text');
                     navigator.clipboard.writeText(fullBlockText).then(() => {
                         copyTextElem.textContent = 'Copied!';
-                        setTimeout(() => { copyTextElem.textContent = 'Copy'; }, 2000);
+                        //setTimeout(() => { copyTextElem.textContent = 'Copy'; }, 2000);
                     });
                 } else if (target.classList.contains('btn-done')) {
                     markPartAsDone(index);
